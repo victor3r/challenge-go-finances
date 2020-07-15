@@ -11,11 +11,6 @@ export const Container = styled.div`
   padding: 40px 20px;
 `;
 
-export const Title = styled.h1`
-  font-size: 48px;
-  color: #3a3a3a;
-`;
-
 export const CardContainer = styled.section`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
