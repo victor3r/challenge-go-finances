@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FiTrash2 } from 'react-icons/fi';
 
 import income from '../../assets/income.svg';
 import outcome from '../../assets/outcome.svg';
@@ -11,7 +12,13 @@ import Header from '../../components/Header';
 import formatValue from '../../utils/formatValue';
 import formatDate from '../../utils/formatDate';
 
-import { Container, CardContainer, Card, TableContainer } from './styles';
+import {
+  Container,
+  CardContainer,
+  Card,
+  TableContainer,
+  Transaction,
+} from './styles';
 
 interface Transaction {
   id: string;
@@ -75,6 +82,24 @@ const Dashboard: React.FC = () => {
     loadTransactions();
   }, []);
 
+  async function handleRemoveTransaction(id: string): Promise<void> {
+    await api.delete(`transactions/${id}`);
+    const response = await api.get<TransactionsResponse>('transactions');
+
+    const newTransactions = transactions.filter(
+      transaction => transaction.id !== id,
+    );
+
+    const formattedBalance = {
+      income: formatValue(response.data.balance.income),
+      outcome: formatValue(response.data.balance.outcome),
+      total: formatValue(response.data.balance.total),
+    };
+
+    setTransactions(newTransactions);
+    setBalance(formattedBalance);
+  }
+
   return (
     <>
       <Header />
@@ -116,14 +141,22 @@ const Dashboard: React.FC = () => {
 
             <tbody>
               {transactions.map(transaction => (
-                <tr key={transaction.id}>
+                <Transaction key={transaction.id}>
                   <td className="title">{transaction.title}</td>
                   <td className={transaction.type}>
                     {transaction.formattedValue}
                   </td>
                   <td>{transaction.category.title}</td>
                   <td>{transaction.formattedDate}</td>
-                </tr>
+                  <td>
+                    <button
+                      onClick={() => handleRemoveTransaction(transaction.id)}
+                      type="button"
+                    >
+                      <FiTrash2 size={20} />
+                    </button>
+                  </td>
+                </Transaction>
               ))}
             </tbody>
           </table>
