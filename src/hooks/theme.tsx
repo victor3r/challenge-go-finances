@@ -1,4 +1,5 @@
 import React, { useState, createContext, useCallback, useContext } from 'react';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
 import light from '../styles/themes/light';
 import dark from '../styles/themes/dark';
@@ -11,6 +12,7 @@ interface ThemeState {
     secundary: string;
 
     background: string;
+    container: string;
     text: string;
   };
 }
@@ -44,7 +46,11 @@ export const ThemeProvider: React.FC = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ theme: state, toggleTheme }}>
-      {children}
+      <ThemeContext.Consumer>
+        {({ theme }) => (
+          <StyledThemeProvider theme={theme}>{children}</StyledThemeProvider>
+        )}
+      </ThemeContext.Consumer>
     </ThemeContext.Provider>
   );
 };
